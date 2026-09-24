@@ -1,4 +1,4 @@
-# 🌟 Lumina — Mapeamento Colaborativo e Engajamento Cívico
+# AcessaGama: Mapeamento Colaborativo e Engajamento Cívico
 
 > **Lumina** é uma plataforma *mobile-first* de crowdsourcing cívico que conecta a comunidade universitária e cidadãos à gestão do espaço público, promovendo a resolução colaborativa de problemas de infraestrutura, acessibilidade e segurança.
 
