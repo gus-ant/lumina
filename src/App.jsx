@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   MapPin, User, Trophy, ChevronRight, AlertTriangle, CheckCircle2,
   ThumbsUp, ArrowLeft, Home, FileText, Medal, MessageSquare,
-  X, Loader2, Pencil, Trash2, Save, ShieldAlert
+  X, Loader2, Pencil, Trash2, Save, ShieldAlert, Camera
 } from 'lucide-react';
 import MapView from './components/MapView';
 import 'leaflet/dist/leaflet.css';
@@ -133,14 +133,25 @@ function HomeScreen({ setCurrentView, reports, setSelectedReport }) {
 function MapScreen({ setCurrentView, reports, onNewReport }) {
   const [clickedPos, setClickedPos] = useState(null);
   const [form, setForm] = useState({ title: '', category: 'Iluminação', urgency: 'Alta' });
+  const [imagePreview, setImagePreview] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   const handleMapClick = useCallback((latlng) => {
     setClickedPos(latlng);
     setForm({ title: '', category: 'Iluminação', urgency: 'Alta' });
+    setImagePreview('');
     setError('');
   }, []);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = async () => {
     if (!form.title.trim()) { setError('Informe um título para o reporte.'); return; }
@@ -149,7 +160,7 @@ function MapScreen({ setCurrentView, reports, onNewReport }) {
       const res = await fetch('/api/reports', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, lat: clickedPos.lat, lng: clickedPos.lng, reporter: CURRENT_USER }),
+        body: JSON.stringify({ ...form, lat: clickedPos.lat, lng: clickedPos.lng, reporter: CURRENT_USER, image: imagePreview }),
       });
       const newReport = await res.json();
       onNewReport(newReport);
@@ -239,6 +250,26 @@ function MapScreen({ setCurrentView, reports, onNewReport }) {
                     {u}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wide block mb-1">Foto da Ocorrência (Opcional)</label>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className={`w-full p-4 border-2 border-dashed rounded-xl flex items-center justify-center gap-2 transition-colors ${imagePreview ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>
+                  {imagePreview ? (
+                    <img src={imagePreview} alt="Preview" className="w-10 h-10 object-cover rounded-md" />
+                  ) : (
+                    <Camera size={20} />
+                  )}
+                  <span className="text-sm font-semibold">{imagePreview ? 'Foto anexada (clique para trocar)' : 'Tirar Foto ou Anexar'}</span>
+                </div>
               </div>
             </div>
 
