@@ -29,6 +29,7 @@ db.exec(`
     likes INTEGER DEFAULT 0,
     status TEXT DEFAULT 'Aberto',
     reporter TEXT DEFAULT 'usuario@aluno.unb.br',
+    image TEXT DEFAULT 'https://images.unsplash.com/photo-1596700813735-02117f739679?w=800&q=80',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
@@ -37,13 +38,13 @@ db.exec(`
 const count = db.prepare('SELECT COUNT(*) as count FROM reports').get();
 if (count.count === 0) {
   const insert = db.prepare(`
-    INSERT INTO reports (title, category, urgency, lat, lng, likes, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO reports (title, category, urgency, lat, lng, likes, status, image)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
-  insert.run('Lâmpada queimada - Estacionamento UAC', 'Iluminação', 'Alta', -15.76289, -47.87198, 18, 'Aberto');
-  insert.run('Rampa com defeito - ICC Norte', 'Acessibilidade', 'Crítica', -15.76410, -47.87050, 12, 'Em Análise');
-  insert.run('Buraco na calçada - FGA', 'Infraestrutura', 'Média', -15.98960, -48.04426, 5, 'Resolvido');
-  insert.run('Lâmpada UED - Bloco B', 'Iluminação', 'Baixa', -15.76350, -47.87250, 3, 'Resolvido');
+  insert.run('Lâmpada queimada - Estacionamento UAC', 'Iluminação', 'Alta', -15.76289, -47.87198, 18, 'Aberto', 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80');
+  insert.run('Rampa com defeito - ICC Norte', 'Acessibilidade', 'Crítica', -15.76410, -47.87050, 12, 'Em Análise', 'https://images.unsplash.com/photo-1582037928769-181f2644ecb7?w=800&q=80');
+  insert.run('Buraco na calçada - FGA', 'Infraestrutura', 'Média', -15.98960, -48.04426, 5, 'Resolvido', 'https://images.unsplash.com/photo-1501187630570-a9b1a45bd5c1?w=800&q=80');
+  insert.run('Lâmpada UED - Bloco B', 'Iluminação', 'Baixa', -15.76350, -47.87250, 3, 'Resolvido', 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80');
 }
 
 // GET /api/reports - Return all reports
@@ -54,15 +55,16 @@ app.get('/api/reports', (req, res) => {
 
 // POST /api/reports - Create new report
 app.post('/api/reports', (req, res) => {
-  const { title, category, urgency, lat, lng } = req.body;
+  const { title, category, urgency, lat, lng, image } = req.body;
   if (!title || !category || !urgency || lat == null || lng == null) {
     return res.status(400).json({ error: 'Campos obrigatórios: title, category, urgency, lat, lng' });
   }
+  const defaultImage = 'https://images.unsplash.com/photo-1596700813735-02117f739679?w=800&q=80';
   const stmt = db.prepare(`
-    INSERT INTO reports (title, category, urgency, lat, lng)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO reports (title, category, urgency, lat, lng, image)
+    VALUES (?, ?, ?, ?, ?, ?)
   `);
-  const result = stmt.run(title, category, urgency, lat, lng);
+  const result = stmt.run(title, category, urgency, lat, lng, image || defaultImage);
   const newReport = db.prepare('SELECT * FROM reports WHERE id = ?').get(result.lastInsertRowid);
   res.status(201).json(newReport);
 });

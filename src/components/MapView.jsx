@@ -112,6 +112,13 @@ export default function MapView({ reports = [], onMapClick, clickedPos }) {
         >
           <Popup>
             <div style={{ minWidth: 180 }}>
+              {r.image && (
+                <img
+                  src={r.image}
+                  alt={r.title}
+                  style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }}
+                />
+              )}
               <p style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{r.title}</p>
               <p style={{ fontSize: 11, color: '#6b7280' }}>📂 {r.category}</p>
               <p style={{ fontSize: 11, color: '#6b7280' }}>⚡ {r.urgency} — {r.status}</p>

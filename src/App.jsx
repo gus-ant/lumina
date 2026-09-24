@@ -105,11 +105,15 @@ function HomeScreen({ setCurrentView, reports, setSelectedReport }) {
                 className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between active:scale-95 transition-all text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${isResolved ? 'bg-emerald-100' : 'bg-orange-100'}`}>
-                    {isResolved
-                      ? <CheckCircle2 className="text-emerald-600" size={20} />
-                      : <AlertTriangle className="text-orange-500" size={20} />}
-                  </div>
+                  {r.image ? (
+                    <img src={r.image} alt={r.title} className="w-12 h-12 rounded-lg object-cover border border-gray-100" />
+                  ) : (
+                    <div className={`p-2 rounded-lg ${isResolved ? 'bg-emerald-100' : 'bg-orange-100'}`}>
+                      {isResolved
+                        ? <CheckCircle2 className="text-emerald-600" size={20} />
+                        : <AlertTriangle className="text-orange-500" size={20} />}
+                    </div>
+                  )}
                   <div>
                     <p className="font-bold text-gray-800 text-sm">#{r.id} {r.title}</p>
                     <p className={`text-xs font-medium ${isResolved ? 'text-emerald-600' : 'text-orange-500'}`}>{r.status}</p>
@@ -328,7 +332,7 @@ function DetailsScreen({ report, setCurrentView, onLike, onUpdateReport, onDelet
       {/* Hero Image */}
       <div className="relative h-56 bg-emerald-900 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1596700813735-02117f739679?w=800&q=80"
+          src={report.image || "https://images.unsplash.com/photo-1596700813735-02117f739679?w=800&q=80"}
           alt="Local"
           className="w-full h-full object-cover opacity-70"
         />
@@ -598,14 +602,16 @@ function MyReportsScreen({ reports, setSelectedReport, setCurrentView }) {
                 className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between active:scale-95 transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`p-2.5 rounded-xl ${isResolved ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
-                    {isResolved ? <CheckCircle2 size={20} /> : <AlertTriangle size={20} />}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-extrabold text-gray-800 text-sm">#{r.id} {r.title}</p>
+                  {r.image ? (
+                    <img src={r.image} alt={r.title} className="w-14 h-14 rounded-xl object-cover border border-gray-100 shrink-0" />
+                  ) : (
+                    <div className={`p-2.5 rounded-xl ${isResolved ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
+                      {isResolved ? <CheckCircle2 size={20} /> : <AlertTriangle size={20} />}
                     </div>
-                    <p className="text-xs text-gray-400 mt-0.5">{r.category} • {r.likes} likes • <span className="font-semibold text-gray-600">{r.status}</span></p>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-extrabold text-gray-800 text-sm truncate">#{r.id} {r.title}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 truncate">{r.category} • {r.likes} likes • <span className="font-semibold text-gray-600">{r.status}</span></p>
                   </div>
                 </div>
                 <ChevronRight className="text-gray-300" size={20} />
