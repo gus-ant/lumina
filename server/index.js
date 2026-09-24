@@ -70,9 +70,60 @@ app.post('/api/reports', (req, res) => {
 // POST /api/reports/:id/like - Like a report
 app.post('/api/reports/:id/like', (req, res) => {
   const { id } = req.params;
-  db.prepare('UPDATE reports SET likes = likes + 1 WHERE id = ?').run(id);
+  const { userEmail } = req.body || {};
+
   const report = db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
-  res.json(report);
+  if (!report) return res.status(404).json({ error: 'Reporte não encontrado' });
+
+  if (userEmail && report.reporter === userEmail) {
+    return res.status(403).json({ error: 'Você não pode confirmar seu próprio reporte!' });
+  }
+
+  db.prepare('UPDATE reports SET likes = likes + 1 WHERE id = ?').run(id);
+  const updated = db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
+  res.json(updated);
+});
+
+// PUT /api/reports/:id - Edit a report
+app.put('/api/reports/:id', (req, res) => {
+  const { id } = req.params;
+  const { title, category, urgency, status, userEmail } = req.body || {};
+
+  const report = db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
+  if (!report) return res.status(404).json({ error: 'Reporte não encontrado' });
+
+  if (userEmail && report.reporter !== userEmail) {
+    return res.status(403).json({ error: 'Apenas o autor pode editar esta ocorrência' });
+  }
+
+  const stmt = db.prepare(`
+    UPDATE reports
+    SET title = COALESCE(?, title),
+        category = COALESCE(?, category),
+        urgency = COALESCE(?, urgency),
+        status = COALESCE(?, status)
+    WHERE id = ?
+  `);
+  stmt.run(title, category, urgency, status, id);
+
+  const updated = db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
+  res.json(updated);
+});
+
+// DELETE /api/reports/:id - Delete a report
+app.delete('/api/reports/:id', (req, res) => {
+  const { id } = req.params;
+  const userEmail = req.query.userEmail;
+
+  const report = db.prepare('SELECT * FROM reports WHERE id = ?').get(id);
+  if (!report) return res.status(404).json({ error: 'Reporte não encontrado' });
+
+  if (userEmail && report.reporter !== userEmail) {
+    return res.status(403).json({ error: 'Apenas o autor pode apagar esta ocorrência' });
+  }
+
+  db.prepare('DELETE FROM reports WHERE id = ?').run(id);
+  res.json({ success: true, id: Number(id) });
 });
 
 app.listen(PORT, () => {
