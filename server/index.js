@@ -76,5 +76,5 @@ app.post('/api/reports/:id/like', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ AcessaGama API rodando em http://localhost:${PORT}`);
+  console.log(`✅ Lumina API rodando em http://localhost:${PORT}`);
 });
