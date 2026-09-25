@@ -27,6 +27,9 @@ const CATEGORIES = ['Iluminação', 'Acessibilidade', 'Segurança', 'Infraestrut
 // ---------- HOME SCREEN ----------
 function HomeScreen({ setCurrentView, reports, setSelectedReport }) {
   const recent = reports.slice(0, 3);
+  const myReports = reports.filter(r => r.reporter === CURRENT_USER);
+  const points = 100 + (myReports.length * 20);
+  const progressPercent = Math.min((points / 500) * 100, 100);
 
   return (
     <div className="flex flex-col min-h-full">
@@ -48,8 +51,8 @@ function HomeScreen({ setCurrentView, reports, setSelectedReport }) {
             <h1 className="text-2xl font-extrabold text-white tracking-tight">Olá, Gustavo! 👋</h1>
             <p className="text-emerald-300 text-sm mt-0.5">{CURRENT_USER}</p>
           </div>
-          <button onClick={() => setCurrentView('profile')} className="bg-white/15 backdrop-blur-sm p-2.5 rounded-full border border-white/20 active:scale-95 transition-all">
-            <User className="text-white" size={22} />
+          <button onClick={() => setCurrentView('profile')} className="bg-white/15 backdrop-blur-sm p-1.5 rounded-full border border-white/20 active:scale-95 transition-all flex items-center justify-center">
+            <div className="w-9 h-9 bg-emerald-700/50 rounded-full flex items-center justify-center text-xl">😊</div>
           </button>
         </div>
 
@@ -71,13 +74,13 @@ function HomeScreen({ setCurrentView, reports, setSelectedReport }) {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col gap-3">
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-3xl font-black text-emerald-600">120</span>
+              <span className="text-3xl font-black text-emerald-600">{points}</span>
               <span className="text-gray-400 font-medium text-sm">/500 PTS</span>
             </div>
             <Trophy className="text-yellow-500" size={32} />
           </div>
           <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all" style={{ width: '24%' }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all" style={{ width: `${progressPercent}%` }} />
           </div>
           <p className="text-xs text-center text-gray-500 font-medium">(Nível 2: Guardião do Campus — Bronze)</p>
         </div>
@@ -686,12 +689,16 @@ function RankingScreen() {
   );
 }
 
-function ProfileScreen() {
+function ProfileScreen({ reports }) {
+  const myReports = reports.filter(r => r.reporter === CURRENT_USER);
+  const points = 100 + (myReports.length * 20);
+  const confirmations = myReports.reduce((acc, r) => acc + r.likes, 0) + 23;
+
   return (
     <div className="p-5 pt-12">
       <div className="flex flex-col items-center gap-3 mb-8">
-        <div className="w-20 h-20 rounded-full bg-emerald-700 flex items-center justify-center shadow-lg">
-          <User size={36} className="text-white" />
+        <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center shadow-lg border-4 border-emerald-400">
+          <span className="text-5xl">😊</span>
         </div>
         <div className="text-center">
           <h1 className="text-xl font-extrabold text-gray-800">Gustavo R.</h1>
@@ -702,7 +709,7 @@ function ProfileScreen() {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-3 mb-6">
-        {[['Reportes', '8'], ['Confirmações', '23'], ['Pts', '120']].map(([label, val]) => (
+        {[['Reportes', myReports.length], ['Confirmações', confirmations], ['Pts', points]].map(([label, val]) => (
           <div key={label} className="bg-white rounded-xl p-3 text-center border border-gray-100 shadow-sm">
             <p className="text-2xl font-black text-emerald-600">{val}</p>
             <p className="text-xs text-gray-400">{label}</p>
@@ -785,7 +792,7 @@ export default function App() {
           onDeleteReport={handleDeleteReport}
         />
       );
-      case 'profile':    return <ProfileScreen />;
+      case 'profile':    return <ProfileScreen reports={reports} />;
       default:           return null;
     }
   };
