@@ -1,6 +1,6 @@
 # AcessaGama: Mapeamento Colaborativo e Engajamento Cívico
 
-> **Lumina** é uma plataforma *mobile-first* de crowdsourcing cívico que conecta a comunidade universitária e cidadãos à gestão do espaço público, promovendo a resolução colaborativa de problemas de infraestrutura, acessibilidade e segurança.
+> **AcessaGama** é uma plataforma *mobile-first* de crowdsourcing cívico que conecta a comunidade universitária e cidadãos à gestão do espaço público, promovendo a resolução colaborativa de problemas de infraestrutura, acessibilidade e segurança.
 
 ---
 
@@ -54,7 +54,7 @@ Nossa missão é transformar a maneira como as pessoas se relacionam com o seu a
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/gus-ant/acessa-gama.git
+   git clone https://github.com/gus-ant/lumina.git
    cd acessa-gama
    ```
 
