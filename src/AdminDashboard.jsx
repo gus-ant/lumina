@@ -376,9 +376,9 @@ export default function AdminDashboard() {
           </div>
 
           {/* ── MAP + CHARTS ── */}
-          <div className="grid grid-cols-5 gap-4" style={{ height: '380px' }}>
+          <div className="grid grid-cols-5 gap-4">
             {/* MAP — 60% */}
-            <div className="col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
+            <div className="col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col aspect-[4/3]">
               <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center shrink-0">
                 <div>
                   <h2 className="font-extrabold text-gray-800">Mapa de Ocorrências</h2>
@@ -397,10 +397,10 @@ export default function AdminDashboard() {
                   </span>
                 </div>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-h-0">
                 <MapContainer
-                  center={[-15.877, -47.958]}
-                  zoom={11}
+                  center={[-15.9896, -48.0443]}
+                  zoom={18}
                   style={{ height: '100%', width: '100%' }}
                   zoomControl={true}
                 >
@@ -422,6 +422,13 @@ export default function AdminDashboard() {
                     >
                       <Popup>
                         <div style={{ minWidth: 200 }}>
+                          {r.image && (
+                            <img
+                              src={r.image}
+                              alt={r.title}
+                              style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }}
+                            />
+                          )}
                           <p style={{ fontWeight: 800, fontSize: 13, marginBottom: 4 }}>{r.title}</p>
                           <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>📍 FGA - UnB</p>
                           <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>📂 {r.category} • ⚡ {r.urgency}</p>

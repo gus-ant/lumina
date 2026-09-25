@@ -89,7 +89,7 @@ function PendingMarker({ latlng }) {
 export default function MapView({ reports = [], onMapClick, clickedPos }) {
   // Center on Gama Campus (FGA-UnB) by default
   const defaultCenter = [-15.9896, -48.0443];
-  const defaultZoom   = 14;
+  const defaultZoom   = 18;
 
   return (
     <MapContainer
