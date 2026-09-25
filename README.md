@@ -1,6 +1,12 @@
-# AcessaGama: Mapeamento Colaborativo e Engajamento Cívico
+# Lumina: Mapeamento Colaborativo e Engajamento Cívico
 
-> **AcessaGama** é uma plataforma *mobile-first* de crowdsourcing cívico que conecta a comunidade universitária e cidadãos à gestão do espaço público, promovendo a resolução colaborativa de problemas de infraestrutura, acessibilidade e segurança.
+<p align="center">
+  <img src="./docs/mobile.png" width="45%" alt="Lumina App Mobile View" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="./docs/dashboard.png" width="45%" alt="Lumina Admin Dashboard" />
+</p>
+
+> **Lumina** é uma plataforma *mobile-first* de crowdsourcing cívico que conecta a comunidade universitária e cidadãos à gestão do espaço público, promovendo a resolução colaborativa de problemas de infraestrutura, acessibilidade e segurança.
 
 ---
 
