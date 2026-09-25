@@ -329,7 +329,7 @@ function DetailsScreen({ report, setCurrentView, onLike, onUpdateReport, onDelet
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Tem certeza que deseja apagar esta ocorrência?')) return;
+    // window.confirm is sometimes blocked in previews, removing for MVP
     setDeleting(true);
     try {
       const res = await fetch(`/api/reports/${report.id}?userEmail=${encodeURIComponent(CURRENT_USER)}`, {
