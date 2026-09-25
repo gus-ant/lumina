@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   LayoutDashboard, Map, List, BarChart2, Settings, LogOut,
   Bell, Search, TrendingUp, TrendingDown, AlertTriangle, Clock,
@@ -163,16 +163,34 @@ function StatusSelect({ value, onChange }) {
 // ─── MAIN DASHBOARD ────────────────────────────────────────────────────────
 export default function AdminDashboard() {
   const [activeNav, setActiveNav] = useState('dashboard');
-  const [reports, setReports] = useState(INITIAL_REPORTS);
+  const [reports, setReports] = useState([]);
   const [search, setSearch]   = useState('');
   const [dateFilter, setDateFilter] = useState('all');
   const [sortDir, setSortDir] = useState('desc');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedRow, setSelectedRow] = useState(null);
 
+  useEffect(() => {
+    fetch('/api/reports')
+      .then(res => res.json())
+      .then(data => setReports(data))
+      .catch(console.error);
+  }, []);
+
   // Update status
-  const updateStatus = (id, newStatus) => {
-    setReports(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+  const updateStatus = async (id, newStatus) => {
+    try {
+      const res = await fetch(`/api/reports/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        setReports(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // KPIs
@@ -186,7 +204,7 @@ export default function AdminDashboard() {
     let list = [...reports];
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter(r => r.title.toLowerCase().includes(q) || r.location.toLowerCase().includes(q) || r.category.toLowerCase().includes(q));
+      list = list.filter(r => r.title.toLowerCase().includes(q) || r.category.toLowerCase().includes(q));
     }
     list.sort((a, b) => sortDir === 'desc' ? priorityScore(b) - priorityScore(a) : priorityScore(a) - priorityScore(b));
     return list;
@@ -405,7 +423,7 @@ export default function AdminDashboard() {
                       <Popup>
                         <div style={{ minWidth: 200 }}>
                           <p style={{ fontWeight: 800, fontSize: 13, marginBottom: 4 }}>{r.title}</p>
-                          <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>📍 {r.location}</p>
+                          <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>📍 FGA - UnB</p>
                           <p style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>📂 {r.category} • ⚡ {r.urgency}</p>
                           <p style={{ fontSize: 11, color: '#6b7280' }}>👍 {r.likes} confirmações • {r.status}</p>
                         </div>
@@ -518,14 +536,14 @@ export default function AdminDashboard() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <img
-                              src={r.img}
+                              src={r.image || "https://images.unsplash.com/photo-1596700813735-02117f739679?w=80&q=60"}
                               alt="thumbnail"
                               className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100"
                               onError={e => { e.target.style.display = 'none'; }}
                             />
                             <div className="min-w-0">
                               <p className="font-bold text-gray-800 text-sm truncate max-w-[220px]">{r.title}</p>
-                              <p className="text-xs text-gray-400 truncate max-w-[220px]">📍 {r.location}</p>
+                              <p className="text-xs text-gray-400 truncate max-w-[220px]">📍 FGA - UnB</p>
                             </div>
                           </div>
                         </td>
@@ -558,7 +576,7 @@ export default function AdminDashboard() {
 
                         {/* Date */}
                         <td className="px-4 py-3 text-center">
-                          <span className="text-xs text-gray-400 font-medium">{r.created}</span>
+                          <span className="text-xs text-gray-400 font-medium">{r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</span>
                         </td>
 
                         {/* Status Select */}
